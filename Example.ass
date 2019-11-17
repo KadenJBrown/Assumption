@@ -1,4 +1,8 @@
 assume "Message" Will print "Message" without quotes
 assume "'This sucks,' he said." Strings can include the opposite...
 assume 'She then said, "I know, that\'s why it\'s fun!."' ...type of quote, or itself using a backslash.
-assume. Does nothing. Helpful for "if not" statements
+assume# Does nothing. Helpful for "if not" statements
+assume itwelve = 12 # set itwelve (a integer called twelve) to 12
+assume shello = "Hello"
+assume shello
+assume itwelve + "" translates to itwelve as a string. Will print.
