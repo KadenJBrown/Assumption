@@ -5,5 +5,7 @@ Interpreter for Assumption, the esoteric programming language
 - [x] Variable setting
 - [x] String printing backslashes
 - [x] Adding/Concatenation
-- [ ] Branches
+- [x] Branches
+- [x] Convert
+- [ ] idk
 - [ ] ...

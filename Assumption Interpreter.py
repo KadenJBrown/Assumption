@@ -1,4 +1,7 @@
 import os
+import time
+
+debug = False
 
 # s - string - "2"
 # i - int - 2
@@ -10,9 +13,36 @@ import os
 ## b - branch - if else
 ## g - gate - or and
 
+def stringtocontent(x):
+    characternum = 0
+    new = ""
+    for character in x:
+        characternum += 1
+        if character == "\n":
+            continue
+        elif characternum > 1 and characternum < len(x):
+            new += character
+    return new
+
+def isnumber(x):
+    isnumber = True
+    for character in str(x):
+        if character == "\n":
+            continue
+        for number in "1234567890.":
+            if character == number:
+                break
+            elif number == ".":
+                isnumber = False
+            else:
+                continue
+    return isnumber
+
 filepath = (os.getcwd()+"\Example.ass")
 
 print(">>> Running from "+str(os.getcwd()))
+
+InUse = True
 
 while True:
     command = input(">>> What file do you want to interpret?\n> ")
@@ -25,18 +55,45 @@ while True:
                 filepath += character
         if not filepath.endswith(".ass"):
             filepath += ".ass"
-    elif command != "same" and command != "last" and command != "":
+    elif command == "same" or command == "last":
+        pass
+    elif command == "":
+        break
+    else:
         filepath = command
     print(">>> File path: " + filepath + "\n\n>>> Interpreting file...")
     if filepath.endswith(".ass"):
         with open(filepath) as fp:
+            ####################################################################################################################
             variables = {}
             linenum = 0
             error = False
-            for line in fp.readlines():
+            waitfor = ""
+            for readline in fp.readlines():
                 linenum += 1
-                if line.startswith("#"):
-                    # COMMENT
+                if readline.find("#") != -1:
+                    line = readline[:(readline.find("#"))]
+                else:
+                    line = readline
+                if waitfor != "" and line != waitfor and line != (waitfor+" "):
+                    if debug:
+                        print(">>> Skipping line #"+str(linenum))
+                        print(">>> "+line)
+                    continue
+                if line == waitfor or line == (waitfor+" "):
+                    if debug:
+                        print(">>> Found line")
+                    waitfor = ""
+                if "input" in line:
+                    invar = input("> ")
+                    invar2 = ""
+                    for character in invar:
+                        if character != "\n" and character != "\t":
+                            invar2 += character
+                    newinput = ("\""+invar2+"\"")
+                    line = (readline[:readline.find("input")]+newinput+readline[readline.find("input")+7:])
+                #print(line)
+                if line == "\n" or line == "":
                     continue
                 elif not line.startswith("assume"):
                     # ASSUME MISSING ERROR
@@ -87,43 +144,16 @@ while True:
                         break
                     elif (arg1.endswith("\"") and arg1.startswith("\"")) or (arg1.endswith("'") and arg1.startswith("'")):
                         # ARG 1 = STRING RAW
-                        characternum = 0
-                        new = ""
-                        for character in arg1:
-                            characternum += 1
-                            if character == "\n":
-                                continue
-                            elif characternum > 1 and characternum < len(arg1):
-                                new += character
-                        arg1 = new
+                        arg1 = stringtocontent(arg1)
                         if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
                             # ARG 2 = STRING RAW
-                            characternum = 0
-                            new = ""
-                            for character in arg2:
-                                characternum += 1
-                                if character == "\n":
-                                    continue
-                                elif characternum > 1 and characternum < len(arg2):
-                                    new += character
-                            arg2 = new
+                            arg2 = stringtocontent(arg2)
                         elif "'" in arg2 or "\"" in arg2:
                             # ARG 2 STRING ERROR
                             print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
                             break
                         else:
-                            isnumber = True
-                            for character in arg2:
-                                if character == "\n":
-                                    continue
-                                for number in "1234567890.":
-                                    if character == number:
-                                        break
-                                    elif number == "0":
-                                        isnumber = False
-                                    else:
-                                        continue
-                            if isnumber:
+                            if isnumber(arg2):
                                 # ARG 2 = INT/FLOAT RAW
                                 arg2 = str(arg2)
                             else:
@@ -133,21 +163,69 @@ while True:
                         # ARG 1 = STRING ERROR
                         print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
                         break
+                    elif isnumber(arg1) and not "." in str(arg1):
+                        # ARG 1 - INT RAW
+                        time.sleep(int(arg1)-1)
+                    elif isnumber(arg1) and "." in str(arg1):
+                        # ARG 1 - FLOAT RAW
+                        time.sleep(float(arg1))
                     elif arg1.startswith("s"):
                         # ARG 1 = STRING VAR
                         if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
                             # ARG 2 = STRING RAW
-                            characternum = 0
-                            new = ""
-                            for character in arg2:
-                                characternum += 1
-                                if characternum > 1 and characternum < len(arg2):
-                                    new += character
-                            arg2 = new
+                            arg2 = stringtocontent(arg2)
                             variables[arg1] += arg2
+                    elif arg1.startswith("i"):
+                        # ARG 1 - INT VAR
+                        if isnumber(arg2) and not "." in str(arg2):
+                            variables[arg1] += arg2
+                        elif arg2.startswith("i"):
+                            variables[arg1] += variables[arg2]
+                        else:
+                            print(">>> ERROR: CAN'T ADD ARG2 TO INTEGER OF ARG1 ON LINE #"+str(linenum))
+                            break
+                elif "-->" in line:
+                    # CONVERT
+                    characternum = 0
+                    before = True
+                    old = ""
+                    new = ""
+                    for character in line:
+                        characternum += 1
+                        if characternum > 7:
+                            if character == " " or character == "-" or character == ">":
+                                if old == "":
+                                    print(">>> ERROR: MISSING ARGUMENT #1 IN CONVERSION ON LINE #"+str(linenum))
+                                    error = True
+                                    break
+                                before = False
+                            elif before:
+                                old += character
+                            else:
+                                new += character
+                    if new == "":
+                        print(">>> ERROR: MISSING ARGUMENT #2 ON LINE #"+str(linenum))
+                        break
+                    else:
+                        try:
+                            old = variables[old]
+                            if new.startswith("s"):
+                                variables[new] = str(old)
+                            elif new.startswith("i"):
+                                variables[new] = int(old)
+                            elif new.startswith("f"):
+                                variables[new] = float(old)
+                            elif new.startswith("b"):
+                                variables[new] = bool(old)
+                            else:
+                                print(">>> ERROR: UNKNOWN TYPE ON LINE #"+str(linenum))
+                                break
+                        except ValueError:
+                            print(">>> ERROR: INVALID CONVERSION ON LINE #"+str(linenum))
+                            break
                 elif "==" in line:
                     # BRANCHES
-                    section = "arg1"
+                    section = "prefix"
                     characternum = 0
                     inside = False
                     quotes = ""
@@ -158,10 +236,18 @@ while True:
                         characternum += 1
                         if character == "\n":
                             continue
+                        elif section == "prefix":
+                            if characternum > 6:
+                                section = "arg1"
                         elif section == "arg1":
                             if character == "=":
-                                section = "arg2"
-                            elif quotes = "" and (character == "'" or character == "\""):
+                                if arg1 == "":
+                                    print(">>> ERROR: ARGUMENT #1 MISSING ON LINE #"+str(linenum))
+                                    error = True
+                                    break
+                                else:
+                                    section = "arg2"
+                            elif quotes == "" and (character == "'" or character == "\""):
                                 quotes = character
                                 inside = True
                                 arg1 += character
@@ -174,8 +260,13 @@ while True:
                             if character == "=":
                                 continue
                             elif character == ",":
-                                section = "branch"
-                            elif quotes = "" and (character == "'" or character == "\""):
+                                if arg2 == "":
+                                    print(">>> ERROR: ARGUMENT #2 MISSING ON LINE #"+str(linenum))
+                                    error = True
+                                    break
+                                else:
+                                    section = "branch"
+                            elif quotes == "" and (character == "'" or character == "\""):
                                 quotes = character
                                 inside = True
                                 arg2 += character
@@ -184,9 +275,109 @@ while True:
                                 arg2 += character
                             elif inside or character != " ":
                                 arg2 += character
+                        elif section == "branch":
+                            if character == " ":
+                                print(">>> ERROR: UNEXPECTED SPACE ON LINE #"+str(linenum))
+                                error = True
+                                break
+                            elif character == "\n":
+                                if branch == "":
+                                    print(">>> ERROR: BRANCH MISSING ON LINE #"+str(linenum))
+                                    error = True
+                                break
+                            else:
+                                branch += character
+                                if characternum == len(line):
+                                    break
+                    impossible = False
+                    if (arg1.endswith("\"") and arg1.startswith("\"")) or (arg1.endswith("'") and arg1.startswith("'")):
+                        # ARG 1 - STRING RAW
+                        arg1 = stringtocontent(arg1)
+                        if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
+                            # ARG 2 - STRING RAW
+                            arg2 = stringtocontent(arg2)
+                        elif arg2.startswith("s"):
+                            # ARG 2 - STRING VAR
+                            arg2 = variables[arg2]
                         else:
-                            
-                    
+                            # ARG 2 - NOT STRING RAW
+                            impossible = True
+                    elif "'" in arg1 or "\"" in arg1:
+                        print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
+                        error = True
+                        break
+                    elif isnumber(arg1):
+                        if "." in arg1:
+                            # ARG 1 - FLOAT
+                            arg1 = float(arg1)
+                            if isnumber(arg2) and "." in arg2:
+                                # ARG 2 - FLOAT RAW
+                                arg2 = float(arg2)
+                            elif arg2.startswith("f"):
+                                # ARG 2 - FLOAT VAR
+                                arg2 = variables[arg2]
+                            else:
+                                # ARG 2 - NOT FLOAT
+                                impossible = True
+                        else:
+                            # ARG 1 - INT
+                            arg1 = int(arg1)
+                            if isnumber(arg2) and not "." in str(arg2):
+                                # ARG 2 - INT
+                                arg2 = int(arg2)
+                            elif arg2.startswith("i"):
+                                arg2 = variables[arg2]
+                            else:
+                                # ARG 2 - NOT INT
+                                impossible = True
+                    else:
+                        if arg1.startswith("s"):
+                            # ARG 1 - STRING VAR
+                            if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
+                                # ARG 2 - STRING RAW
+                                arg2 = stringtocontent(arg2)
+                            elif "'" in arg2 or "\"" in arg2:
+                                # ARG 2 - STRING ERROR
+                                print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
+                                break
+                            else:
+                                if arg2.startswith("s"):
+                                    # ARG 2 - STRING VAR
+                                    arg2 = variables[arg2]
+                                else:
+                                    # ARG 2 - NOT STRING
+                                    impossible = True
+                        elif arg1.startswith("b"):
+                            # ARG 1 - BOOL VAR
+                            if arg2.startswith("b"):
+                                arg2 = variables[arg2]
+                            elif arg2 == "True":
+                                arg2 = True
+                            elif arg2 == "False":
+                                arg2 = False
+                            else:
+                                impossible = True
+                        elif arg1.startswith("i"):
+                            # ARG 1 - INT VAR
+                            if arg2.startswith("i"):
+                                arg2 = variables[arg2]
+                            if isnumber(arg2) and not "." in str(arg2):
+                                arg2 = int(arg2)
+                            else:
+                                impossible = True
+                        elif arg1.startswith("f"):
+                            # ARG 1 - FLOAT VAR
+                            if arg2.startswith("f"):
+                                arg2 = variables[arg2]
+                            if isnumber(arg2) and "." in arg2:
+                                arg2 = float(arg2)
+                            else:
+                                impossible = True
+                        arg1 = variables[arg1]
+                    if (not impossible) and arg1 == arg2:
+                        waitfor = ("assume " + branch)
+                    else:
+                        waitfor = ""
                 elif "=" in line and not "==" in line:
                     # SETTING VARIABLES
                     before = True
@@ -199,7 +390,7 @@ while True:
                         characternum += 1
                         if character == "#":
                             break
-                        if character == "\n":
+                        if character == "\n" or character == "\t":
                             continue
                         elif character == quotetype or (quotetype == "" and (character == "\"" or character == "'")):
                             quotetype = character
@@ -217,17 +408,27 @@ while True:
                             value += character
                     if value == "":
                         print(">>> ERROR: VALUE TO SET VARIABLE TO MISSING ON LINE #"+str(linenum))
-                        error = True
                         break
                     elif variablename.startswith("i"):
-                        value = int(value)
+                        if isnumber(value) and not "." in value:
+                            value = int(value)
+                        else:
+                            value = int(variables[value])
                     elif variablename.startswith("f"):
-                        value = float(value)
+                        if isnumber(value) and "." in value:
+                            value = float(value)
+                        else:
+                            value = float(variable[value])
                     elif variablename.startswith("b"):
-                        value = bool(value)
+                        if value == "True" or value == "False":
+                            value = bool(value)
+                        else:
+                            value = bool(variable[value])
                     elif variablename.startswith("s"):
-                        if quotecount != 2:
-                            print(">>> ERROR: VARIABLE SAYS VALUE IS A STRING, NOT A STRING AT LINE #"+str(linenum))
+                        if value.startswith("s") and quotecount == 0:
+                            value = str(variables[value])
+                        elif quotecount != 2:
+                            print(">>> ERROR: VARIABLE SAYS VALUE IS A STRING, BUT IT'S NOT A STRING AT LINE #"+str(linenum))
                             break
                     elif not variablename.startswith("l") and not variablename.startswith("d"):
                         print(">>> ERROR: TYPE OF VARIABLE UNKNOWN ON LINE #"+str(linenum))
@@ -255,6 +456,8 @@ while True:
                             error = True
                             break
                     print(result)
+                elif line.startswith("assume f") or line.startswith("assume i"):
+                    time.sleep(variables[line[7:]]-1)
                 elif line.startswith("assume s"):
                     # PRINT STRING VAR
                     characternum = 0
@@ -268,19 +471,12 @@ while True:
                     while variablename.endswith("\n"):
                         variablename = variablename[:-1]
                     print(variables[variablename])
+                elif line.startswith("assume b"):
+                    continue
                 else:
-                    # PASS OR ERROR
-                    line_no_comment = ""
-                    for character in line:
-                        if character == "#":
-                            break
-                        else:
-                            line_no_comment += character
-                    if line_no_comment == "assume":
-                        continue
-                    else:
-                        print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
-                        break
+                    # ERROR
+                    print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
+                    break
                 if error:
                     # CLOSE PROGRAM ON ERROR
                     break
