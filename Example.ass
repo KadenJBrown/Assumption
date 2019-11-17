@@ -1,8 +1,44 @@
-assume "Message" Will print "Message" without quotes
+assume "Message Test" Will print "Message Test" without quotes
+#
 assume "'This sucks,' he said." Strings can include the opposite...
-assume 'She then said, "I know, that\'s why it\'s fun!."' ...type of quote, or itself using a backslash.
+assume 'She then said, "I know, that\'s why it\'s fun!"' ...type of quote, or itself using a backslash.
+#
 assume# Does nothing. Helpful for "if not" statements
-assume itwelve = 12 # set itwelve (a integer called twelve) to 12
+#
+assume "Hey " + "there."
+#
 assume shello = "Hello"
 assume shello
-assume itwelve + "" translates to itwelve as a string. Will print.
+assume "Hello, " + shello
+assume shello + ", User."
+assume shello
+#
+assume itwelve = 12 # set itwelve (a integer called twelve) to 12
+assume "" + itwelve # translates to itwelve as a string. Will print.
+#
+assume ieight = 8 # set ieight to 8
+assume ifour = 4 # set ifour to 4
+assume ifourtwice = ifour # set ifourtwice to ifour (4)
+assume ifourtwice + ifour # add ifour (4) to ifourtwice (4) [8]
+#
+assume ieight == ifourtwice, b4andEIGHT # if ieight (8) and ifourtwice (8) are equal, jump to b4andEIGHT [True/Jump]
+assume "Eight is not equal to four twice." # Will only display if line24 False
+assume 1 == 1, bJumpPastIf # if 1 and 1 are equal, jump to bJumpPastIf [True/Jump]
+assume b4andEIGHT # When jumping to b4andEIGHT, go here.
+assume "Eight is equal to four twice." # Will only display if line24 True
+assume bJumpPastIf # When jumping to bJumpPastIf, go here.
+#
+assume ieight == ifour, bFOURand8 												# if ieight (8) equals ifour (4), jump to bFOURand8 [False/Don't Jump]
+assume "You're smart!" 															# Only displays if line31 is False
+assume sIn = input 																# Set the value of sIn to a new input
+assume sIn == "wait", bWait 													# If the input is "wait" then jump to bWait
+assume sIn 																		# Print sIn only if line34 False
+assume 1 == 1, bJumpPastIf2 													# Jump to bJumpPastIf2
+assume bWait 																	# Fall here when line34 is True
+assume sTime = sIn 																# Set sTime as the same value of sIn
+assume convert sTime float 														# Convert sTime to a float and save it as fTime
+assume fTime 																	# Wait fTime seconds
+assume 1 == 1, bJumpPastIf2 													# Jump to bJumpPastIf2
+assume bFOURand8 																# Fall here if line31 is True
+assume "You're dumb."
+assume bJumpPastIf2																# Fall here from line36 and line41

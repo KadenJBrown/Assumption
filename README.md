@@ -2,6 +2,8 @@
 Interpreter for Assumption, the esoteric programming language
 
 - [x] String printing
-- [ ] Variable setting
-- [ ] String printing backslashes
+- [x] Variable setting
+- [x] String printing backslashes
+- [x] Adding/Concatenation
+- [ ] Branches
 - [ ] ...
