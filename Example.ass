@@ -1,0 +1,4 @@
+assume "Message" Will print "Message" without quotes
+assume "'This sucks,' he said." Strings can include the opposite...
+assume 'She then said, "I know, that\'s why it\'s fun!."' ...type of quote, or itself using a backslash.
+assume. Does nothing. Helpful for "if not" statements
