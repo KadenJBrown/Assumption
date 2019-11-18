@@ -1,0 +1,3 @@
+assume "Wait how long?"
+assume sIn = input
+assume sIn --> iSeconds

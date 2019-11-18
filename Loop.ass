@@ -1,0 +1,14 @@
+assume "Type the secret word."
+assume sWord = input
+assume "\n\n\n\n\n\n\n\n\n\n\n"
+assume "I'm thinking of a word starting with H... (Remember to capital first letter)"
+assume iCount = 0
+assume bReset
+assume iCount + 1
+assume "Guess Number " + iCount
+assume sGuess = input
+assume sGuess == sWord,bWin
+assume "...nope."
+assume 1 == 1,bReset
+assume bWin
+assume "YEP!"

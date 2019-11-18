@@ -1,5 +1,15 @@
 # Hello, I am a NOUN named NAME. I like NOUNS and hate NOUNS. You are ADJECTIVE.
 
+## s - string - "2"
+## i - int - 2
+## f - float - 2.0
+## b - bool - True False
+### l - list - []
+### d - dict - {}
+### f - function - call()
+### b - branch - if else
+### g - gate - or and
+
 assume sMadLib = "Hello, I am a "
 assume "NOUN"
 assume sMadLib + input
