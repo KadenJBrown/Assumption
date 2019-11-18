@@ -30,21 +30,21 @@ assume b4andEIGHT # When jumping to b4andEIGHT,go here.
 assume "Eight is equal to four twice." # Will only display if line24 True
 assume bJumpPastIf# When jumping to bJumpPastIf,go here.
 #
-assume ieight == ifour,bFOURand8# 												# if ieight (8) equals ifour (4),jump to bFOURand8 [False/Don't Jump]
-assume "You're smart!"# 															# Only displays if line31 is False
-assume "Type \"wait\" or something else"
-assume sIn = input# 																# Set the value of sIn to a new input
-assume sIn == "wait",bWait# 														# If the input is "wait" then jump to bWait
-assume sIn# 																		# Print sIn only if line34 False
-assume 1 == 1,bJumpPastIf2# 														# Jump to bJumpPastIf2
-assume bWait# 																	# Fall here when line34 is True
-assume "How many seconds"
-assume sIn = input
-assume sTime = sIn# 																# Set sTime as the same value of sIn
-assume sTime --> fTime# 														# Convert sTime to a float and save it as fTime
-assume fTime# 																	# Wait fTime seconds
-assume 1 == 1,bJumpPastIf2# 														# Jump to bJumpPastIf2
-assume bFOURand8# 																# Fall here if line31 is True
+assume ieight == ifour,bFOURand8# 														# if ieight (8) equals ifour (4),jump to bFOURand8 [False/Don't Jump]
+	assume "You're smart!"# 															# Only displays if line31 is False
+	assume "Type \"wait\" or something else"
+	assume sIn = input# 																# Set the value of sIn to a new input
+	assume sIn == "wait",bWait# 														# If the input is "wait" then jump to bWait
+		assume sIn# 																	# Print sIn only if line34 False
+		assume 1 == 1,bJumpPastIf2# 													# Jump to bJumpPastIf2
+	assume bWait# 																		# Fall here when line34 is True
+	assume "How many seconds"
+	assume sIn = input
+	assume sTime = sIn# 																# Set sTime as the same value of sIn
+		assume sTime --> fTime# 														# Convert sTime to a float and save it as fTime
+		assume fTime# 																	# Wait fTime seconds
+	assume 1 == 1,bJumpPastIf2# 														# Jump to bJumpPastIf2
+assume bFOURand8# 																		# Fall here if line31 is True
 assume "You're dumb."#
-assume bJumpPastIf2#																# Fall here from line36 and line41
+assume bJumpPastIf2#																	# Fall here from line36 and line41
 assume "Goodbye."

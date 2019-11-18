@@ -57,6 +57,9 @@ while True:
             filepath += ".ass"
     elif command == "same" or command == "last":
         pass
+    elif command == "d" or command == "debug":
+        debug = not debug
+        continue
     elif command == "":
         break
     else:
@@ -75,6 +78,20 @@ while True:
                     line = readline[:(readline.find("#"))]
                 else:
                     line = readline
+                if "input" in line:
+                    invar = input("> ")
+                    invar2 = ""
+                    for character in invar:
+                        if character != "\n" and character != "\t":
+                            invar2 += character
+                    newinput = ("\""+invar2+"\"")
+                    line = (readline[:readline.find("input")]+newinput+readline[readline.find("input")+7:])
+                if "\t" in line:
+                    newline = ""
+                    for character in line:
+                        if character != "\t":
+                            newline += character
+                    line = newline
                 if waitfor != "" and line != waitfor and line != (waitfor+" "):
                     if debug:
                         print(">>> Skipping line #"+str(linenum))
@@ -84,14 +101,6 @@ while True:
                     if debug:
                         print(">>> Found line")
                     waitfor = ""
-                if "input" in line:
-                    invar = input("> ")
-                    invar2 = ""
-                    for character in invar:
-                        if character != "\n" and character != "\t":
-                            invar2 += character
-                    newinput = ("\""+invar2+"\"")
-                    line = (readline[:readline.find("input")]+newinput+readline[readline.find("input")+7:])
                 #print(line)
                 if line == "\n" or line == "":
                     continue
@@ -132,7 +141,7 @@ while True:
                                     arg2 += character
                             elif character == "\\":
                                 ignore = True
-                            elif inside or character != " ":
+                            elif inside or (character != " " and character != "\t"):
                                 if before:
                                     arg1 += character
                                 else:
@@ -193,7 +202,7 @@ while True:
                     for character in line:
                         characternum += 1
                         if characternum > 7:
-                            if character == " " or character == "-" or character == ">":
+                            if character == "\t" or character == " " or character == "-" or character == ">":
                                 if old == "":
                                     print(">>> ERROR: MISSING ARGUMENT #1 IN CONVERSION ON LINE #"+str(linenum))
                                     error = True
@@ -254,7 +263,7 @@ while True:
                             elif character == quotes:
                                 inside = False
                                 arg1 += character
-                            elif inside or character != " ":
+                            elif inside or (character != " " and character != "\t"):
                                 arg1 += character
                         elif section == "arg2":
                             if character == "=":
@@ -273,10 +282,10 @@ while True:
                             elif character == quotes:
                                 inside = False
                                 arg2 += character
-                            elif inside or character != " ":
+                            elif inside or (character != " " and character != "\t"):
                                 arg2 += character
                         elif section == "branch":
-                            if character == " ":
+                            if character == " " or character == "\t":
                                 print(">>> ERROR: UNEXPECTED SPACE ON LINE #"+str(linenum))
                                 error = True
                                 break
@@ -386,25 +395,33 @@ while True:
                     value = ""
                     quotecount = 0
                     quotetype = ""
+                    inside = False
+                    ignore = False
                     for character in line:
                         characternum += 1
-                        if character == "#":
-                            break
                         if character == "\n" or character == "\t":
                             continue
-                        elif character == quotetype or (quotetype == "" and (character == "\"" or character == "'")):
+                        elif character == "\\":
+                            ignore = True
+                            continue
+                        elif ignore == False and (character == quotetype or (quotetype == "" and (character == "\"" or character == "'"))):
                             quotetype = character
                             quotecount += 1
+                            if quotecount == 1:
+                                inside = True
+                            else:
+                                inside = False
                             continue
-                        elif character == "=":
+                        ignore = False
+                        if character == "=":
                             before = False
                             if variablename == "":
                                 print(">>> ERROR: VARIABLE TO SET MISSING ON LINE #"+str(linenum))
                                 error = True
                                 break
-                        elif characternum > 7 and character != " " and before == True:
+                        elif characternum > 7 and character != " " and character != "\t" and before == True:
                             variablename += character
-                        elif character != " " and before == False:
+                        elif ((character != " " and character != "\t") or inside) and before == False:
                             value += character
                     if value == "":
                         print(">>> ERROR: VALUE TO SET VARIABLE TO MISSING ON LINE #"+str(linenum))

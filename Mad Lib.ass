@@ -1,0 +1,16 @@
+# Hello, I am a NOUN named NAME. I like NOUNS and hate NOUNS. You are ADJECTIVE.
+
+assume sMadLib = "Hello, I am a "
+assume "NOUN"
+assume sMadLib + input
+assume sMadLib + " named "
+assume "NAME"
+assume sMadLib + input
+assume sMadLib + ". I like "
+assume "PLURAL NOUN"
+assume sMadLib + input
+assume sMadLib + ". You are "
+assume "ADJECTIVE"
+assume sMadLib + input
+assume sMadLib + "."
+assume sMadLib
