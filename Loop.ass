@@ -1,6 +1,6 @@
 assume "Type the secret word."
 assume sWord = input
-assume "\n\n\n\n\n\n\n\n\n\n\n"
+assume "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 assume "I'm thinking of a word starting with H... (Remember to capital first letter)"
 assume iCount = 0
 assume bReset
