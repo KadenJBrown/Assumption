@@ -1,0 +1,20 @@
+assume iBottles = 99
+assume bAgain
+assume sBottles = ""
+assume sBottles + iBottles
+assume sBottles + " bottles of beer on the wall,"
+assume sBottles
+assume sBottles = ""
+assume sBottles + iBottles
+assume sBottles + " bottles of beer."
+assume sBottles
+assume "Take one down, pass it around,"
+assume iBottles + -1
+assume sBottles = ""
+assume sBottles + iBottles
+assume sBottles + " bottle(s) of beer on the wall.\n"
+assume sBottles
+assume iBottles == 1,bOne
+assume 1 == 1,bAgain
+assume bOne
+assume "1 bottle of beer on the wall,\n1 bottle of beer.\nTake one down, pass it around,\nNo more bottles of beer on the wall."

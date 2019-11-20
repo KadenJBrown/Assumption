@@ -7,5 +7,8 @@ Interpreter for Assumption, the esoteric programming language
 - [x] Adding/Concatenation
 - [x] Branches
 - [x] Convert
-- [ ] idk
+- [ ] Random
+- [ ] Lists
+- [ ] Dicts
+- [ ] 
 - [ ] ...
