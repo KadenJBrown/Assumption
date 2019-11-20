@@ -68,22 +68,41 @@ while True:
     if filepath.endswith(".ass"):
         with open(filepath) as fp:
             ####################################################################################################################
-            leave = False
+            #leave = False
             waitfor = ""
             variables = {}
-            while not leave:
-                everyline = []
+            #while not leave:
+            everyline = []
+            currentline = ""
+            for character in fp.read():
+                if character == "\n":
+                    everyline.append(currentline)
+                    currentline = ""
+                else:
+                    currentline += character
+            if currentline != "":
+                everyline.append(currentline)
                 currentline = ""
-                for character in fp.read():
-                    if character == "\n":
-                        everyline.append(currentline)
-                        currentline = ""
+            error = False
+            linenum = -1
+            while linenum < len(everyline):
+                if error:
+                    # CLOSE PROGRAM ON ERROR
+                    break
+                else:
+                    if linenum + 1 >= len(everyline):
+                        if waitfor == "":
+                            #leave = True
+                            linenum += 1
+                        else:
+                            linenum = 0
                     else:
-                        currentline += character
-                linenum = 0
-                error = False
-                for line in everyline:
-                    linenum += 1
+                        linenum += 1
+                if waitfor == "" or (waitfor != "" and waitfor == everyline[linenum]):
+                    try:
+                        line = everyline[linenum]
+                    except IndexError:
+                        break
                     if line.find("#") != -1:
                         line = line[:(line.find("#"))]
                     if "input" in line:
@@ -110,7 +129,7 @@ while True:
                             print(">>> Found line")
                         waitfor = ""
                     #print(line)
-                    everyline[linenum-1] = line
+                    #everyline[linenum-1] = line
                     if line == "\n" or line == "":
                         continue
                     elif not line.startswith("assume"):
@@ -508,13 +527,6 @@ while True:
                         # ERROR
                         print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
                         break
-                    if error:
-                        # CLOSE PROGRAM ON ERROR
-                        break
-                if waitfor == "":
-                    leave = True
-                else:
-                    continue
     else:
         print(">>> ERROR: NOT AN ASSUMPTION FILE.")
     print(">>> File ended.\n")
