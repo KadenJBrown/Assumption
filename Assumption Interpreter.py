@@ -16,10 +16,16 @@ debug = False
 def stringtocontent(x):
     characternum = 0
     new = ""
+    ignore = False
     for character in x:
         characternum += 1
+        if character == "n" and ignore:
+            new += "\n"
+        ignore = False
         if character == "\n":
             continue
+        elif character == "\\":
+            ignore = True
         elif characternum > 1 and characternum < len(x):
             new += character
     return new
@@ -212,8 +218,17 @@ while True:
                                 # ARG 1 = STRING VAR
                                 if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
                                     # ARG 2 = STRING RAW
-                                    arg2 = stringtocontent(arg2)
-                                    variables[arg1] += arg2
+                                    variables[arg1] += stringtocontent(stringtocontent(arg2))
+                                elif "'" in arg2 or "\"" in arg2:
+                                    # ARG 2 STRING ERROR
+                                    print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
+                                    break
+                                else:
+                                    if isnumber(arg2):
+                                        # ARG 2 = INT/FLOAT RAW
+                                        variables[arg1] += str(arg2)
+                                    else:
+                                        variables[arg1] += str(variables[arg2])
                             elif arg1.startswith("i"):
                                 # ARG 1 - INT VAR
                                 if isnumber(arg2) and not "." in str(arg2):
