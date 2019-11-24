@@ -81,11 +81,15 @@ while True:
                 #while not leave:
                 everyline = []
                 currentline = ""
+                commented = False
                 for character in fp.read():
                     if character == "\n":
                         everyline.append(currentline)
                         currentline = ""
-                    else:
+                        commented = False
+                    elif character == "#":
+                        commented = True
+                    elif not commented and character != "\t":
                         currentline += character
                 if currentline != "":
                     everyline.append(currentline)
@@ -105,14 +109,14 @@ while True:
                                 linenum = 0
                         else:
                             linenum += 1
+                    try:
+                        line = everyline[linenum]
+                    except IndexError:
+                        break
                     if waitfor == "" or (waitfor != "" and waitfor == everyline[linenum]):
+                        if debug and waitfor != "":
+                                print(">>> Found line:\n["+waitfor+"]")
                         waitfor = ""
-                        try:
-                            line = everyline[linenum]
-                        except IndexError:
-                            break
-                        if line.find("#") != -1:
-                            line = line[:(line.find("#"))]
                         if "input" in line:
                             invar = input("> ")
                             invar2 = ""
@@ -121,21 +125,6 @@ while True:
                                     invar2 += character
                             newinput = ("\""+invar2+"\"")
                             line = (line[:line.find("input")]+newinput+line[line.find("input")+7:])
-                        if "\t" in line or "\n" in line:
-                            newline = ""
-                            for character in line:
-                                if character != "\t" and character != "\n":
-                                    newline += character
-                            line = newline
-                        if waitfor != "" and line != waitfor and line != (waitfor+" ") and line != (waitfor+"\n") and line != (waitfor+"\t"):
-                            if debug:
-                                print(">>> Skipping line #"+str(linenum))
-                                print(">>> "+line)
-                            continue
-                        if line == waitfor or line == (waitfor+" "):
-                            if debug:
-                                print(">>> Found line:\n"+waitfor)
-                            waitfor = ""
                         #print(line)
                         #everyline[linenum-1] = line
                         if line == "\n" or line == "":
@@ -218,7 +207,7 @@ while True:
                                 # ARG 1 = STRING VAR
                                 if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
                                     # ARG 2 = STRING RAW
-                                    variables[arg1] += stringtocontent(stringtocontent(arg2))
+                                    variables[arg1] += stringtocontent(arg2)
                                 elif "'" in arg2 or "\"" in arg2:
                                     # ARG 2 STRING ERROR
                                     print(">>> ERROR: STRING MISSING QUOTE ON LINE #"+str(linenum))
@@ -430,8 +419,12 @@ while True:
                                 arg1 = variables[arg1]
                             if (not impossible) and arg1 == arg2:
                                 waitfor = ("assume " + branch)
+                                if debug:
+                                    print(">>> Waiting for "+str(waitfor)+" because "+str(arg1)+" and "+str(arg2)+" are equal.")
                             else:
                                 waitfor = ""
+                                if debug:
+                                    print(">>> Not waiting for anything because "+str(arg1)+" and "+str(arg2)+" aren't equal.")
                         elif "=" in line and not "==" in line:
                             # SETTING VARIABLES
                             before = True
@@ -487,7 +480,7 @@ while True:
                                 else:
                                     value = bool(variable[value])
                             elif variablename.startswith("s"):
-                                if value.startswith("s") and quotecount == 0:
+                                if (value.startswith("s") or value.startswith("i") or value.startswith("f") or value.startswith("b")) and quotecount == 0:
                                     value = str(variables[value])
                                 elif quotecount != 2:
                                     print(">>> ERROR: VARIABLE SAYS VALUE IS A STRING, BUT IT'S NOT A STRING AT LINE #"+str(linenum))
@@ -544,6 +537,10 @@ while True:
                             # ERROR
                             print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
                             break
+                    else:
+                        if debug:
+                            print(">>> Skipping line #"+str(linenum))
+                            print("["+line+"]")
             except KeyError:
                 print(">>> ERROR: KeyError ON LINE #"+str(linenum))
     else:

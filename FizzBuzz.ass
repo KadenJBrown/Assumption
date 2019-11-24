@@ -1,0 +1,37 @@
+# Start
+assume iCurrent = 0
+assume bNext
+	# Increment number
+	assume iCurrent + 1
+	# Fizz?
+	assume sOut = iCurrent
+	assume iEditable = iCurrent
+	assume bFizz
+		assume iEditable + -3
+	assume iEditable == 0,bYesFizz
+	assume iEditable == -1,bNoFizz
+	assume iEditable == -2,bNoFizz
+	assume 1 == 1,bFizz
+	assume bYesFizz
+		assume sOut = "Fizz"
+	assume bNoFizz
+	# Buzz?
+	assume iEditable = iCurrent
+	assume bBuzz
+		assume iEditable + -5
+	assume iEditable == 0,bYesBuzz
+	assume iEditable == -1,bNoBuzz
+	assume iEditable == -2,bNoBuzz
+	assume iEditable == -3,bNoBuzz
+	assume iEditable == -4,bNoBuzz
+	assume 1 == 1,bBuzz
+	assume bYesBuzz
+		assume sOut == "Fizz",bFizzed
+			assume sOut = "Buzz"
+			assume 1 == 1,bNoBuzz
+		assume bFizzed
+			assume sOut + "Buzz"
+	assume bNoBuzz
+	# Output
+	assume sOut
+assume 1 == 1,bNext
