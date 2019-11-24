@@ -8,7 +8,10 @@ Interpreter for Assumption, the esoteric programming language
 - [x] Branches
 - [x] Convert
 - [ ] Random
+- [ ] Slices
 - [ ] Lists
 - [ ] Dicts
-- [ ] 
+- [ ] Functions?
+- [ ] Branch Values?
+- [ ] Gates?
 - [ ] ...

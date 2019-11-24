@@ -21,6 +21,8 @@ def stringtocontent(x):
         characternum += 1
         if character == "n" and ignore:
             new += "\n"
+            ignore = False
+            continue
         ignore = False
         if character == "\n":
             continue
@@ -145,6 +147,13 @@ while True:
                             for character in line:
                                 characternum += 1
                                 if characternum > 7:
+                                    if ignore and character == "n":
+                                        if before:
+                                            arg1 += "\\n"
+                                        else:
+                                            arg2 += "\\n"
+                                        ignore = False
+                                        continue
                                     if character == quote and ignore == False:
                                         inside = False
                                     ignore = False
@@ -176,7 +185,7 @@ while True:
                             if arg2 == "":
                                 print(">>> ERROR: ARGUMENT #2 TO ADD/CONCATENATE MISSING ON LINE #"+str(linenum))
                                 break
-                            elif (arg1.endswith("\"") and arg1.startswith("\"")) or (arg1.endswith("'") and arg1.startswith("'")):
+                            if (arg1.endswith("\"") and arg1.startswith("\"")) or (arg1.endswith("'") and arg1.startswith("'")):
                                 # ARG 1 = STRING RAW
                                 arg1 = stringtocontent(arg1)
                                 if (arg2.endswith("\"") and arg2.startswith("\"")) or (arg2.endswith("'") and arg2.startswith("'")):
@@ -227,6 +236,9 @@ while True:
                                 else:
                                     print(">>> ERROR: CAN'T ADD ARG2 TO INTEGER OF ARG1 ON LINE #"+str(linenum))
                                     break
+                            if debug:
+                                print(">>> ARG1 of line #"+str(linenum)+" is "+str(arg1))
+                                print(">>> ARG2 of line #"+str(linenum)+" is "+str(arg2))
                         elif "-->" in line:
                             # CONVERT
                             characternum = 0
@@ -534,9 +546,12 @@ while True:
                         elif line.startswith("assume b"):
                             continue
                         else:
-                            # ERROR
-                            print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
-                            break
+                            try:
+                                time.sleep(int(line[7:]))
+                            except ValueError:
+                                # ERROR
+                                print(">>> ERROR: UNKNOWN LINE FOR LINE #"+str(linenum))
+                                break
                     else:
                         if debug:
                             print(">>> Skipping line #"+str(linenum))

@@ -1,3 +1,18 @@
+# Set seconds
 assume "Wait how long?"
 assume sIn = input
 assume sIn --> iSeconds
+# Start loop
+assume bLoop
+	# Say seconds left
+	assume "" + iSeconds
+	# Wait a second
+	assume 1
+	# Decrease seconds
+	assume iSeconds + -1
+assume iSeconds == 0,bExit
+# Loop if still has seconds
+assume 1 == 1,bLoop
+assume bExit
+# Exit if no more seconds
+assume "0\n\n[Done!]"
