@@ -1,3 +1,0 @@
-assume sIn = input
-assume sIn + "er"
-assume "Ok " + sIn

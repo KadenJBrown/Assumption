@@ -1,5 +1,5 @@
 assume "Type the secret word."
-assume sWord = input
+assume sWord = vInput
 assume "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 assume "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 assume "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
@@ -8,7 +8,7 @@ assume iCount = 0
 assume bReset
 assume iCount + 1
 assume "Guess Number " + iCount
-assume sGuess = input
+assume sGuess = vInput
 assume sGuess == sWord,bWin
 assume "...nope."
 assume 1 == 1,bReset

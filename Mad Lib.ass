@@ -12,15 +12,15 @@
 
 assume sMadLib = "Hello, I am a "
 assume "NOUN"
-assume sMadLib + input
+assume sMadLib + vInput
 assume sMadLib + " named "
 assume "NAME"
-assume sMadLib + input
+assume sMadLib + vInput
 assume sMadLib + ". I like "
 assume "PLURAL NOUN"
-assume sMadLib + input
+assume sMadLib + vInput
 assume sMadLib + ". You are "
 assume "ADJECTIVE"
-assume sMadLib + input
+assume sMadLib + vInput
 assume sMadLib + "."
 assume sMadLib

@@ -7,8 +7,11 @@ Interpreter for Assumption, the esoteric programming language
 - [x] Adding/Concatenation
 - [x] Branches
 - [x] Convert
-- [ ] Random
+- [x] sVar --> iVar
 - [ ] Slices
+- [ ] Len
+- [ ] .lower and .upper
+- [ ] Random
 - [ ] Lists
 - [ ] Dicts
 - [ ] Functions?

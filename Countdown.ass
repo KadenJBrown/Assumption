@@ -1,6 +1,6 @@
 # Set seconds
 assume "Wait how long?"
-assume sIn = input
+assume sIn = vInput
 assume sIn --> iSeconds
 # Start loop
 assume bLoop

@@ -1,0 +1,12 @@
+assume sInput = vInput
+assume sLast = ""
+assume bRepeat
+	assume sInput --> iInput
+	assume sInput = iInput
+	assume sInput + "\l"
+	assume sInput
+	assume sInput == sLast,bExit
+	assume sLast = sInput
+assume 1 == 1,bRepeat
+assume bExit
+assume "End."

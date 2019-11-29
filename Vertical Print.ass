@@ -1,0 +1,7 @@
+assume sHorizon = vInput
+assume iCurrent = -1
+assume bLoop
+	assume iCurrent + 1
+	assume item iCurrent from sHorizon as sCurrent
+	assume sCurrent
+assume 1 == 1,bLoop
